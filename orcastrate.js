@@ -69,7 +69,7 @@ var serve = {                                                // depends on cooki
     theSite: function (){                                    // methode call to serve site
         var app = serve.express();                           // create famework object
         var http = require('http').Server(app);              // http server for express frameworkauth)
-        app.use(serve.parse.urlencoded({extended: true}));   // support URL-encoded bodies
+        app.use(serve.parse.json());                         // support JSON bodies
         app.use(serve.express.static(__dirname + '/views')); // serve page dependancies (socket, jquery, bootstrap)
         var router = serve.express.Router();                 // create express router object to add routing events to
         router.post('/pullrequest', github.listenEvent());   // real listener post route
