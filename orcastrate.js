@@ -18,6 +18,12 @@ var service = { // logic for adding a removing service integrations
             return eachservice.socketId;
         }).indexOf(socketId);                                  // figure index service in our services array
         if(serviceNumber > -1){foundCallback(serviceNumber);}  // NOTE we remove services keeping ids in closure would be inaccurate
+    },
+    doByName: function(socketId, foundCallback){               // executes a callback with one of our services based on socket id
+        var serviceNumber = service.s.map(function(eachservice){
+            return eachservice.name;
+        }).indexOf(name);                                      // figure index service in our services array
+        if(serviceNumber > -1){foundCallback(serviceNumber);}  // NOTE we remove services keeping ids in closure would be inaccurate
     }
 };
 
@@ -36,7 +42,7 @@ var socket = {                                                         // socket
             if(socket.auth(authPacket)){                                      // make sure we are connected w/ trusted source and name
                 service.create(authPacket, client.id);                        // returns number in service array
                 console.log('client ' + authPacket.name + ' successfully connected');
-                socket.io.to(client.id).emit('deploy');
+                // socket.io.to(client.id).emit('deploy');
                 client.on('disconnect', service.disconnect(client.id));       // remove service from service array on disconnect
             } else {                                                          // in case token was wrong or name not provided
                 console.log('client tried to connect' + JSON.stringify(authPacket, null, 4));
@@ -63,8 +69,17 @@ var github = {
                 res.status(200).send('OK');                       // ACK notification
                 res.end();
                 console.log(JSON.stringify(req.body, null, 4));   // see what we get
+                signal.deploy(req.body.repository.name);
             }
         };
+    }
+};
+
+var signal = {
+    deploy: function(repository){
+        service.doByName(repository, function deployIt(index){
+            socket.io.to(service.s[index].socketId).emit('deploy');
+        });
     }
 };
 
