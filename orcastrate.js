@@ -54,7 +54,11 @@ var github = {
     querystring: require('querystring'),
     listenEvent: function(responseURI){                           // create route handler for test or prod
         return function(req, res){                                // route handler
-            console.log(JSON.stringify(req.body, null, 4));       // see what we get
+            if(req.body){
+                res.status(200).send('OK');                       // ACK notification
+                res.end();
+                console.log(JSON.stringify(req.body, null, 4));   // see what we get
+            }
         };
     }
 };
