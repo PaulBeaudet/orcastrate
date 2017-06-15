@@ -2,9 +2,6 @@
 
 var service = { // logic for adding a removing service integrations
     s: [], // array where we store properties and functions of connected sevices
-    create: function(serviceDeets, socketId){
-        service.s.push({socketId: socketId, name: serviceDeets.name});
-    },
     disconnect: function(socketId){                                                          // hold socketId information in closure
         return function socketDisconnect(){
             service.do(socketId, function removeservice(index){
@@ -19,7 +16,7 @@ var service = { // logic for adding a removing service integrations
         }).indexOf(socketId);                                  // figure index service in our services array
         if(serviceNumber > -1){foundCallback(serviceNumber);}  // NOTE we remove services keeping ids in closure would be inaccurate
     },
-    doByName: function(socketId, foundCallback){               // executes a callback with one of our services based on socket id
+    doByName: function(name, foundCallback){                   // executes a callback with one of our services based on socket id
         var serviceNumber = service.s.map(function(eachservice){
             return eachservice.name;
         }).indexOf(name);                                      // figure index service in our services array
@@ -37,10 +34,12 @@ var socket = {                                                         // socket
             client.on('authenticate', socket.setup(client));           // initially clients can only ask to authenticate
         }); // basically we want to authorize our users before setting up event handlers for them or adding them to emit whitelist
     },
-    setup: function(client){                                                  // hold socketObj/key in closure, return callback to authorize user
-        return function(authPacket){                                          // data passed from service {token:"valid token", name:"of service"}
-            if(socket.auth(authPacket)){                                      // make sure we are connected w/ trusted source and name
-                service.create(authPacket, client.id);                        // returns number in service array
+    setup: function(client){                                           // hold socketObj/key in closure, return callback to authorize user
+        return function(authPacket){                                   // data passed from service {token:"valid token", name:"of service"}
+            if(socket.auth(authPacket)){                               // make sure we are connected w/ trusted source and name
+                authPacket.socketId = client.id;
+                console.log(JSON.stringify(authPacket, null, 4));
+                service.s.push(authPacket);                            // hold on to what clients are connected to us
                 console.log('client ' + authPacket.name + ' successfully connected');
                 // socket.io.to(client.id).emit('deploy');
                 client.on('disconnect', service.disconnect(client.id));       // remove service from service array on disconnect
