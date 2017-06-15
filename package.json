@@ -1,21 +1,21 @@
 {
-  "name": "payment_notification_relay",
+  "name": "orcastrate",
   "version": "1.0.0",
-  "description": "Relay payment notifications to a local server and slack",
-  "main": "paymentNotificationServer.js",
+  "description": "Listens for pr merges to git hub and trigger new version deployments",
+  "main": "orcastrate.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/ManchesterMakerspace/paymentNotificationRelay.git"
+    "url": "git+ssh://git@github.com/PaulBeaudet/orcastrate.git"
   },
-  "author": "Manchester Makerspace",
+  "author": "Paul Beaudet",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ManchesterMakerspace/paymentNotificationRelay/issues"
+    "url": "https://github.com/paulbeaudet/orcastrate/issues"
   },
-  "homepage": "https://github.com/ManchesterMakerspace/paymentNotificationRelay#readme",
+  "homepage": "https://github.com/paulbeaudet/orcastrate#readme",
   "private": true,
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -26,7 +26,7 @@
     "socket.io-client": "^1.7.2"
   },
   "engines": {
-    "node": "4.2.4",
-    "npm": "2.14.12"
+    "node": "6.10.3",
+    "npm": "3.10.10"
   }
 }
