@@ -31,6 +31,7 @@ var socket = {                                                         // socket
     setup: function(client){                                                  // hold socketObj/key in closure, return callback to authorize user
         return function(authPacket){                                          // data passed from service {token:"valid token", name:"of service"}
             if(socket.auth(authPacket)){                                      // make sure we are connected w/ trusted source and name
+                console.log('client ' + authPacket.name + ' successfully connected');
                 service.create(authPacket, client.id);                        // returns number in service array
                 client.on('disconnect', service.disconnect(client.id));       // remove service from service array on disconnect
             } else {                                                          // in case token was wrong or name not provided
