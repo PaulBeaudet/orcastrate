@@ -65,9 +65,8 @@ var github = {
     listenEvent: function(responseURI){                           // create route handler for test or prod
         return function(req, res){                                // route handler
             if(req.body){
-                res.status(200).send('OK');                       // ACK notification
-                res.end();
-                console.log(JSON.stringify(req.body, null, 4));   // see what we get
+                res.status(200).send('OK');res.end();             // ACK notification
+                console.log('Just got a post from ' + req.body.repository.name);   // see what we get
                 signal.deploy(req.body.repository.name);
             }
         };
