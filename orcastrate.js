@@ -7,14 +7,17 @@ var service = { // logic for adding a removing service integrations
     },
     disconnect: function(socketId){                                                          // hold socketId information in closure
         return function socketDisconnect(){
-            service.do(socketId, function removeservice(index){service.s.splice(index, 1);});// given its there remove service from services array
+            service.do(socketId, function removeservice(index){
+                console.log(service.s[index].name + ' was disconnected');
+                service.s.splice(index, 1);
+            });// given its there remove service from services array
         };
     },
-    do: function(socketId, foundCallback){               // executes a callback with one of our services based on socket id
+    do: function(socketId, foundCallback){                     // executes a callback with one of our services based on socket id
         var serviceNumber = service.s.map(function(eachservice){
             return eachservice.socketId;
-        }).indexOf(socketId);                            // figure index service in our services array
-        if(serviceNumber > -1){foundCallback(serviceNumber);}    // NOTE we remove services keeping ids in closure would be inaccurate
+        }).indexOf(socketId);                                  // figure index service in our services array
+        if(serviceNumber > -1){foundCallback(serviceNumber);}  // NOTE we remove services keeping ids in closure would be inaccurate
     }
 };
 
@@ -31,8 +34,9 @@ var socket = {                                                         // socket
     setup: function(client){                                                  // hold socketObj/key in closure, return callback to authorize user
         return function(authPacket){                                          // data passed from service {token:"valid token", name:"of service"}
             if(socket.auth(authPacket)){                                      // make sure we are connected w/ trusted source and name
-                console.log('client ' + authPacket.name + ' successfully connected');
                 service.create(authPacket, client.id);                        // returns number in service array
+                console.log('client ' + authPacket.name + ' successfully connected');
+                socket.io.to(client.id).emit('deploy');
                 client.on('disconnect', service.disconnect(client.id));       // remove service from service array on disconnect
             } else {                                                          // in case token was wrong or name not provided
                 console.log('client tried to connect' + JSON.stringify(authPacket, null, 4));
