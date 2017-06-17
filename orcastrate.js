@@ -64,8 +64,8 @@ var github = {
     crypto: require('crypto'),
     querystring: require('querystring'),
     verifyHook: function(signature, payload, secret){
-        var computedSignature = 'sha1=' + crypto.createHmac("sha1", secret).update(JSON.stringify(payload)).digest("hex");
-        return crypto.timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(computedSignature, 'utf8'));
+        var computedSignature = 'sha1=' + github.crypto.createHmac("sha1", secret).update(JSON.stringify(payload)).digest("hex");
+        return github.crypto.timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(computedSignature, 'utf8'));
     },
     listenEvent: function(responseURI){                           // create route handler for test or prod
         return function(req, res){                                // route handler
