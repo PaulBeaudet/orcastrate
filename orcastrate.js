@@ -61,13 +61,20 @@ var socket = {                                                         // socket
 
 var github = {
     request: require('request'),
+    crypto: require('crypto'),
     querystring: require('querystring'),
+    verifyHook: function(signature, payload, secret){
+        var computedSignature = 'sha1=' + crypto.createHmac("sha1", secret).update(JSON.stringify(payload)).digest("hex");
+        return crypto.timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(computedSignature, 'utf8'));
+    },
     listenEvent: function(responseURI){                           // create route handler for test or prod
         return function(req, res){                                // route handler
             if(req.body){
                 res.status(200).send('OK');res.end();             // ACK notification
                 console.log('Just got a post from ' + req.body.repository.name);   // see what we get
-                signal.deploy(req.body.repository.name);
+                if(github.verifyHook(req.headers['x-hub-signature'], req.body, process.env.GITHUB_SECRET)){
+                    signal.deploy(req.body.repository.name);
+                }
             }
         };
     }
